@@ -3,7 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const DB_PATH = path.resolve(__dirname, '../../db.sqlite')
+const DB_PATH = path.resolve(__dirname, '../..', process.env['DB_PATH'] ?? 'db.sqlite')
 
 export const db = new Database(DB_PATH)
 

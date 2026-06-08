@@ -1,3 +1,11 @@
+import { readFileSync, existsSync } from 'node:fs'
+if (existsSync('.env')) {
+  readFileSync('.env', 'utf8').split('\n').forEach(line => {
+    const m = line.match(/^([^=]+)=(.*)$/)
+    if (m) process.env[m[1].trim()] ??= m[2].trim()
+  })
+}
+
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { serve } from '@hono/node-server'

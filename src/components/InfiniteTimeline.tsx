@@ -9,20 +9,57 @@ import type { TimelineStore } from '../stores/TimelineStore'
 type Era = { year: number; label: string; color: string; priority: number; size: number }
 
 const ERAS: Era[] = [
-  { year: -13_800_000_000, label: 'BIG BANG',         color: '#ff6b35', priority: 1, size: 13 },
-  { year: -13_500_000_000, label: 'First Stars',       color: '#ffd700', priority: 2, size: 11 },
-  { year: -13_200_000_000, label: 'First Galaxies',    color: '#a78bfa', priority: 2, size: 11 },
-  { year:  -4_600_000_000, label: 'Solar System',      color: '#60a5fa', priority: 1, size: 12 },
-  { year:  -3_800_000_000, label: 'Life on Earth',     color: '#4ade80', priority: 1, size: 12 },
-  { year:    -541_000_000, label: 'Cambrian',           color: '#86efac', priority: 2, size: 11 },
-  { year:    -252_000_000, label: 'Great Dying',        color: '#f87171', priority: 2, size: 11 },
-  { year:     -66_000_000, label: 'K-Pg Extinction',   color: '#fb923c', priority: 2, size: 11 },
-  { year:      -3_300_000, label: 'Hominids',           color: '#d4a574', priority: 3, size: 10 },
-  { year:         -10_000, label: 'Agriculture',        color: '#fbbf24', priority: 3, size: 10 },
-  { year:          -3_000, label: 'Bronze Age',         color: '#e2b96a', priority: 4, size: 10 },
-  { year:               0, label: 'Common Era',         color: '#cbd5e1', priority: 3, size: 10 },
-  { year:            1440, label: 'Printing Press',     color: '#c4b5fd', priority: 4, size: 10 },
-  { year:            1969, label: 'Moon Landing',       color: '#a78bfa', priority: 4, size: 10 },
+  { year: -13_800_000_000, label: 'BIG BANG', color: '#ff6b35', priority: 1, size: 13 },
+  { year: -13_500_000_000, label: 'First Stars', color: '#ffd700', priority: 2, size: 11 },
+  { year: -13_200_000_000, label: 'First Galaxies', color: '#a78bfa', priority: 2, size: 11 },
+  { year: -4_600_000_000, label: 'Solar System', color: '#60a5fa', priority: 1, size: 12 },
+  { year: -3_800_000_000, label: 'Life on Earth', color: '#4ade80', priority: 1, size: 12 },
+  { year: -541_000_000, label: 'Cambrian', color: '#86efac', priority: 2, size: 11 },
+  { year: -252_000_000, label: 'Great Dying', color: '#f87171', priority: 2, size: 11 },
+  { year: -66_000_000, label: 'K-Pg Extinction', color: '#fb923c', priority: 2, size: 11 },
+  { year: -3_300_000, label: 'Hominids', color: '#d4a574', priority: 3, size: 10 },
+  { year: -10_000, label: 'Agriculture', color: '#fbbf24', priority: 3, size: 10 },
+  { year: -3_000, label: 'Bronze Age', color: '#e2b96a', priority: 4, size: 10 },
+  { year: 0, label: 'Common Era', color: '#cbd5e1', priority: 3, size: 10 },
+  { year: 1440, label: 'Printing Press', color: '#c4b5fd', priority: 4, size: 10 },
+  { year: 1969, label: 'Moon Landing', color: '#a78bfa', priority: 4, size: 10 },
+]
+
+// ── Geological period catalogue ──────────────────────────────────────────────
+
+type Period = {
+  start: number
+  end: number | null  // null = extends to present
+  label: string
+  color: string
+  tags: string[]
+  level: number  // 1 = eon, 2 = era, 3 = period
+}
+
+
+// Source: https://en.wikipedia.org/wiki/List_of_time_periods
+const PERIODS: Period[] = [
+  // Eons (level 1)
+  { start: -4_600_000_000, end: -4_000_000_000, label: 'Hadean', color: '#6b21a8', tags: ['geological', 'eon'], level: 1 },
+  { start: -4_000_000_000, end: -2_500_000_000, label: 'Archean', color: '#9f1239', tags: ['geological', 'eon'], level: 1 },
+  { start: -2_500_000_000, end: -541_000_000, label: 'Proterozoic', color: '#0e4c7a', tags: ['geological', 'eon'], level: 1 },
+  // Eras — Phanerozoic (level 2)
+  { start: -541_000_000, end: -252_000_000, label: 'Paleozoic', color: '#1d4ed8', tags: ['geological', 'era'], level: 2 },
+  { start: -252_000_000, end: -66_000_000, label: 'Mesozoic', color: '#15803d', tags: ['geological', 'era'], level: 2 },
+  { start: -66_000_000, end: null, label: 'Cenozoic', color: '#b45309', tags: ['geological', 'era'], level: 2 },
+  // Periods (level 3)
+  { start: -541_000_000, end: -485_400_000, label: 'Cambrian', color: '#2563eb', tags: ['geological', 'period'], level: 3 },
+  { start: -485_400_000, end: -443_800_000, label: 'Ordovician', color: '#0284c7', tags: ['geological', 'period'], level: 3 },
+  { start: -443_800_000, end: -419_200_000, label: 'Silurian', color: '#0891b2', tags: ['geological', 'period'], level: 3 },
+  { start: -419_200_000, end: -358_900_000, label: 'Devonian', color: '#0d9488', tags: ['geological', 'period'], level: 3 },
+  { start: -358_900_000, end: -298_900_000, label: 'Carboniferous', color: '#059669', tags: ['geological', 'period'], level: 3 },
+  { start: -298_900_000, end: -251_900_000, label: 'Permian', color: '#92400e', tags: ['geological', 'period'], level: 3 },
+  { start: -251_900_000, end: -201_300_000, label: 'Triassic', color: '#c2410c', tags: ['geological', 'period'], level: 3 },
+  { start: -201_300_000, end: -145_000_000, label: 'Jurassic', color: '#166534', tags: ['geological', 'period'], level: 3 },
+  { start: -145_000_000, end: -66_000_000, label: 'Cretaceous', color: '#15803d', tags: ['geological', 'period'], level: 3 },
+  { start: -66_000_000, end: -23_030_000, label: 'Paleogene', color: '#a16207', tags: ['geological', 'period'], level: 3 },
+  { start: -23_030_000, end: -2_580_000, label: 'Neogene', color: '#b45309', tags: ['geological', 'period'], level: 3 },
+  { start: -2_580_000, end: null, label: 'Quaternary', color: '#d97706', tags: ['geological', 'period'], level: 3 },
 ]
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -41,27 +78,80 @@ function niceInterval(rough: number): number {
 function formatYear(year: number): string {
   const abs = Math.abs(year)
   if (abs >= 1_000_000_000) return `${(abs / 1_000_000_000).toFixed(abs % 500_000_000 === 0 ? 0 : 1)} Bya`
-  if (abs >= 1_000_000)     return `${(abs / 1_000_000).toFixed(abs % 500_000 === 0 ? 0 : 1)} Mya`
-  if (abs >= 10_000)        return `${Math.round(abs / 1000)}k ${year < 0 ? 'BCE' : 'CE'}`
-  if (year < 0)             return `${abs} BCE`
-  if (year === 0)           return '0 CE'
+  if (abs >= 1_000_000) return `${(abs / 1_000_000).toFixed(abs % 500_000 === 0 ? 0 : 1)} Mya`
+  if (abs >= 10_000) return `${Math.round(abs / 1000)}k ${year < 0 ? 'BCE' : 'CE'}`
+  if (year < 0) return `${abs} BCE`
+  if (year === 0) return '0 CE'
   return `${year} CE`
 }
 
 function decimalYearToDate(y: number): { year: number; month: number; day: number } {
   const DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-  const year       = Math.floor(y)
-  const frac       = y - year
+  const year = Math.floor(y)
+  const frac = y - year
   const monthFloat = frac * 12
-  const month      = Math.max(1, Math.min(12, Math.ceil(monthFloat) || 1))
-  const isLeap     = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)
-  const dim        = month === 2 && isLeap ? 29 : DAYS[month - 1]
-  const dayFrac    = monthFloat - Math.floor(monthFloat)
-  const day        = Math.max(1, Math.min(dim, Math.round(dayFrac * dim) || 1))
+  const month = Math.max(1, Math.min(12, Math.ceil(monthFloat) || 1))
+  const isLeap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)
+  const dim = month === 2 && isLeap ? 29 : DAYS[month - 1]
+  const dayFrac = monthFloat - Math.floor(monthFloat)
+  const day = Math.max(1, Math.min(dim, Math.round(dayFrac * dim) || 1))
   return { year, month, day }
 }
 
 // ── Canvas renderer ──────────────────────────────────────────────────────────
+
+function drawPeriods(
+  ctx: CanvasRenderingContext2D,
+  store: TimelineStore,
+  W: number,
+  H: number,
+) {
+  for (const p of PERIODS) {
+    const startPx = store.yearToPixel(p.start, W)
+    const endPx = store.yearToPixel(p.end ?? store.nowYear, W)
+    if (endPx < 0 || startPx > W) continue
+
+    const x0 = Math.max(0, startPx)
+    const x1 = Math.min(W, endPx)
+    const bw = x1 - x0
+    if (bw < 2) continue
+
+    const alpha = p.level === 1 ? 0.12 : p.level === 2 ? 0.16 : 0.22
+
+    ctx.save()
+
+    ctx.globalAlpha = alpha
+    ctx.fillStyle = p.color
+    ctx.fillRect(x0, 0, bw, H)
+
+    if (startPx >= 0 && startPx <= W) {
+      ctx.globalAlpha = alpha * 1.5
+      ctx.strokeStyle = p.color
+      ctx.lineWidth = 0.5
+      ctx.beginPath()
+      ctx.moveTo(startPx, 0)
+      ctx.lineTo(startPx, H)
+      ctx.stroke()
+    }
+
+    if (bw > 40) {
+      ctx.beginPath()
+      ctx.rect(x0 + 2, 0, bw - 4, H)
+      ctx.clip()
+
+      const lx = (x0 + x1) / 2
+      const ly = p.level === 1 ? 12 : p.level === 2 ? 22 : 32
+      const fs = p.level === 1 ? 10 : p.level === 2 ? 9 : 8
+      ctx.globalAlpha = p.level === 1 ? 0.25 : p.level === 2 ? 0.30 : 0.35
+      ctx.fillStyle = '#c8d8e8'
+      ctx.font = `${fs}px ui-monospace, monospace`
+      ctx.textAlign = 'center'
+      ctx.fillText(p.label.toUpperCase(), lx, ly)
+    }
+
+    ctx.restore()
+  }
+}
 
 function draw(
   ctx: CanvasRenderingContext2D,
@@ -75,17 +165,20 @@ function draw(
 
   const lineY = Math.round(H * 0.58)
 
+  // ── geological period bands ──
+  drawPeriods(ctx, store, W, H)
+
   // ── gradient history band ──
-  const bbPx  = store.yearToPixel(store.bigBangYear, W)
+  const bbPx = store.yearToPixel(store.bigBangYear, W)
   const nowPx = store.yearToPixel(store.nowYear, W)
   const x0 = Math.max(0, bbPx)
   const x1 = Math.min(W, nowPx)
   if (x1 > x0) {
     const grad = ctx.createLinearGradient(x0, 0, x1, 0)
-    grad.addColorStop(0,    '#ff6b3530')
+    grad.addColorStop(0, '#ff6b3530')
     grad.addColorStop(0.35, '#1e3a5f60')
     grad.addColorStop(0.85, '#16453060')
-    grad.addColorStop(1,    '#4ade8060')
+    grad.addColorStop(1, '#4ade8060')
     ctx.strokeStyle = grad
     ctx.lineWidth = 3
     ctx.globalAlpha = 0.4
@@ -102,7 +195,7 @@ function draw(
   const visibleYears = W * store.yearPerPx
   const interval = niceInterval(visibleYears / 8)
   const startYear = store.pixelToYear(0, W)
-  const endYear   = store.pixelToYear(W, W)
+  const endYear = store.pixelToYear(W, W)
   const firstTick = Math.ceil(startYear / interval) * interval
 
   ctx.font = '10px ui-monospace, monospace'
@@ -114,7 +207,7 @@ function draw(
     const isMajor = Math.abs((y / (interval * 5)) - Math.round(y / (interval * 5))) < 0.001
     const tickH = isMajor ? 9 : 4
     ctx.strokeStyle = isMajor ? '#334155' : '#1e293b'
-    ctx.lineWidth   = isMajor ? 1 : 0.5
+    ctx.lineWidth = isMajor ? 1 : 0.5
     ctx.beginPath()
     ctx.moveTo(px, lineY - tickH); ctx.lineTo(px, lineY + tickH)
     ctx.stroke()
@@ -126,11 +219,11 @@ function draw(
 
   // ── era / event markers ──
   const minPriority =
-    visibleYears < 500        ? 5
-    : visibleYears < 50_000   ? 4
-    : visibleYears < 1e8      ? 3
-    : visibleYears < 2e9      ? 2
-    : 1
+    visibleYears < 500 ? 5
+      : visibleYears < 50_000 ? 4
+        : visibleYears < 1e8 ? 3
+          : visibleYears < 2e9 ? 2
+            : 1
 
   for (const era of ERAS) {
     if (era.priority > minPriority) continue
@@ -139,7 +232,7 @@ function draw(
 
     ctx.save()
     ctx.strokeStyle = era.color + '55'
-    ctx.lineWidth   = era.priority === 1 ? 1.5 : 1
+    ctx.lineWidth = era.priority === 1 ? 1.5 : 1
     ctx.setLineDash([3, 4])
     ctx.beginPath()
     ctx.moveTo(px, lineY - 8); ctx.lineTo(px, lineY - 44)
@@ -148,9 +241,9 @@ function draw(
 
     ctx.fillStyle = era.color
     ctx.beginPath()
-    ctx.moveTo(px,     lineY - 8)
+    ctx.moveTo(px, lineY - 8)
     ctx.lineTo(px + 4, lineY - 2)
-    ctx.lineTo(px,     lineY + 4)
+    ctx.lineTo(px, lineY + 4)
     ctx.lineTo(px - 4, lineY - 2)
     ctx.closePath()
     ctx.fill()
@@ -165,9 +258,9 @@ function draw(
   // ── BIG BANG radial glow ──
   if (bbPx > -60 && bbPx < W + 60) {
     const rg = ctx.createRadialGradient(bbPx, lineY, 0, bbPx, lineY, 36)
-    rg.addColorStop(0,   '#ff6b3555')
+    rg.addColorStop(0, '#ff6b3555')
     rg.addColorStop(0.5, '#ff6b3515')
-    rg.addColorStop(1,   'transparent')
+    rg.addColorStop(1, 'transparent')
     ctx.fillStyle = rg
     ctx.beginPath()
     ctx.arc(bbPx, lineY, 36, 0, Math.PI * 2)
@@ -233,9 +326,9 @@ function draw(
     // diamond on the axis
     ctx.fillStyle = '#38bdf8'
     ctx.beginPath()
-    ctx.moveTo(selPx,     lineY - 8)
+    ctx.moveTo(selPx, lineY - 8)
     ctx.lineTo(selPx + 5, lineY)
-    ctx.lineTo(selPx,     lineY + 8)
+    ctx.lineTo(selPx, lineY + 8)
     ctx.lineTo(selPx - 5, lineY)
     ctx.closePath()
     ctx.fill()
@@ -251,9 +344,9 @@ function draw(
 // ── Component ────────────────────────────────────────────────────────────────
 
 export const InfiniteTimeline = observer(() => {
-  const root         = useRootStore()
-  const store        = root.timeline
-  const canvasRef    = useRef<HTMLCanvasElement>(null)
+  const root = useRootStore()
+  const store = root.timeline
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   // Track drag state + whether mouse moved (to distinguish click from pan)
   const drag = useRef<{ x: number; center: number; moved: boolean } | null>(null)
@@ -271,11 +364,11 @@ export const InfiniteTimeline = observer(() => {
   // resize → redraw
   useEffect(() => {
     const container = containerRef.current
-    const canvas    = canvasRef.current
+    const canvas = canvasRef.current
     if (!container || !canvas) return
     const ro = new ResizeObserver(entries => {
       const { width, height } = entries[0].contentRect
-      canvas.width  = Math.round(width)
+      canvas.width = Math.round(width)
       canvas.height = Math.round(height)
       redraw()
     })
@@ -301,7 +394,7 @@ export const InfiniteTimeline = observer(() => {
   const onMouseUp = useCallback((e: React.MouseEvent) => {
     if (drag.current && !drag.current.moved && canvasRef.current) {
       const rect = canvasRef.current.getBoundingClientRect()
-      const px   = e.clientX - rect.left
+      const px = e.clientX - rect.left
       const decYear = store.pixelToYear(px, canvasRef.current.width)
       const { year, month, day } = decimalYearToDate(decYear)
       root.astroChart.setYear(year)
@@ -317,8 +410,8 @@ export const InfiniteTimeline = observer(() => {
   const onWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault()
     if (!canvasRef.current) return
-    const rect   = canvasRef.current.getBoundingClientRect()
-    const px     = e.clientX - rect.left
+    const rect = canvasRef.current.getBoundingClientRect()
+    const px = e.clientX - rect.left
     const factor = e.deltaY > 0 ? 1.15 : 1 / 1.15
     store.zoomAt(factor, px, canvasRef.current.width)
   }, [store])
