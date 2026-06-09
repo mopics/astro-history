@@ -61,5 +61,11 @@ export class TimelineStore {
       Math.min(TOTAL_SPAN / 4, this.yearPerPx * factor),
     )
     this.viewCenterYear = anchorYear - (anchorPx - canvasWidth / 2) * this.yearPerPx
-  })
+  });
+
+  // GUI
+  selectedPeriodTags: Record<string, boolean> = {}
+  setSelectedPeriodTags(tags: Record<string, boolean>) {
+    this.selectedPeriodTags = tags
+  }
 }
