@@ -1,7 +1,8 @@
 import { makeAutoObservable, action, runInAction } from 'mobx'
 import type { RootStore } from './RootStore'
+import { TIMELINE_CATEGORIES, type TimelineCategoryKey } from '../components/timeline/categories'
+import { BIG_BANG_YEAR } from '../lib/time'
 
-const BIG_BANG_YEAR = -13_800_000_000
 const NOW_YEAR = new Date().getFullYear()
 const TOTAL_SPAN = NOW_YEAR - BIG_BANG_YEAR
 
@@ -64,8 +65,11 @@ export class TimelineStore {
   });
 
   // GUI
-  selectedPeriodTags: Record<string, boolean> = {}
-  setSelectedPeriodTags(tags: Record<string, boolean>) {
-    this.selectedPeriodTags = tags
+  visibleCategories: Record<TimelineCategoryKey, boolean> = Object.fromEntries(
+    TIMELINE_CATEGORIES.map(c => [c.key, true]),
+  ) as Record<TimelineCategoryKey, boolean>
+
+  toggleCategory(key: TimelineCategoryKey) {
+    this.visibleCategories[key] = !this.visibleCategories[key]
   }
 }

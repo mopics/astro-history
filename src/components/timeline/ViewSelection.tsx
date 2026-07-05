@@ -1,13 +1,9 @@
-import { useState } from 'react'
-import { ALL_TAGS } from './periods'
+import { observer } from 'mobx-react-lite'
+import { useTimelineStore } from '../../stores/StoreContext'
+import { TIMELINE_CATEGORIES } from './categories'
 
-export function ViewSelection() {
-  const [checked, setChecked] = useState<Record<string, boolean>>(
-    () => Object.fromEntries(ALL_TAGS.map(t => [t, true]))
-  )
-
-  const toggle = (tag: string) =>
-    setChecked(prev => ({ ...prev, [tag]: !prev[tag] }))
+export const ViewSelection = observer(function ViewSelection() {
+  const store = useTimelineStore()
 
   return (
     <div
@@ -17,24 +13,24 @@ export function ViewSelection() {
     >
       <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1.5">View</p>
       <ul className="flex flex-col gap-1">
-        {ALL_TAGS.map(tag => (
-          <li key={tag} className="flex items-center gap-1.5">
+        {TIMELINE_CATEGORIES.map(({ key, label }) => (
+          <li key={key} className="flex items-center gap-1.5">
             <input
-              id={`tag-${tag}`}
+              id={`cat-${key}`}
               type="checkbox"
-              checked={checked[tag]}
-              onChange={() => toggle(tag)}
+              checked={store.visibleCategories[key]}
+              onChange={() => store.toggleCategory(key)}
               className="accent-slate-400 w-3 h-3 cursor-pointer"
             />
             <label
-              htmlFor={`tag-${tag}`}
-              className="text-[10px] text-slate-400 capitalize cursor-pointer select-none"
+              htmlFor={`cat-${key}`}
+              className="text-[10px] text-slate-400 cursor-pointer select-none"
             >
-              {tag}
+              {label}
             </label>
           </li>
         ))}
       </ul>
     </div>
   )
-}
+})

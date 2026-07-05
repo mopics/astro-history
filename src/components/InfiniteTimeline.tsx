@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { autorun } from 'mobx'
 import { useRootStore } from '../stores/StoreContext'
 import type { TimelineStore } from '../stores/TimelineStore'
-import { PERIODS } from './timeline/periods'
+import { TIMELINE_CATEGORIES } from './timeline/categories'
 import { ViewSelection } from './timeline/ViewSelection'
 
 // ── Cosmic event catalogue ──────────────────────────────────────────────────
@@ -71,50 +71,52 @@ function drawPeriods(
   W: number,
   H: number,
 ) {
-  for (const p of PERIODS) {
-    const startPx = store.yearToPixel(p.start, W)
-    const endPx = store.yearToPixel(p.end ?? store.nowYear, W)
-    if (endPx < 0 || startPx > W) continue
+  for (const category of TIMELINE_CATEGORIES) {
+    if (!store.visibleCategories[category.key]) continue
+    const { style } = category
+    const bands = category.getBands ? category.getBands(store.yearPerPx) : category.bands
 
-    const x0 = Math.max(0, startPx)
-    const x1 = Math.min(W, endPx)
-    const bw = x1 - x0
-    if (bw < 2) continue
+    for (const band of bands) {
+      const startPx = store.yearToPixel(band.start, W)
+      const endPx = store.yearToPixel(band.end ?? store.nowYear, W)
+      if (endPx < 0 || startPx > W) continue
 
-    const alpha = p.level === 1 ? 0.12 : p.level === 2 ? 0.16 : 0.22
+      const x0 = Math.max(0, startPx)
+      const x1 = Math.min(W, endPx)
+      const bw = x1 - x0
+      if (bw < 2) continue
 
-    ctx.save()
+      ctx.save()
 
-    ctx.globalAlpha = alpha
-    ctx.fillStyle = p.color
-    ctx.fillRect(x0, 0, bw, H)
+      ctx.globalAlpha = style.alpha
+      ctx.fillStyle = band.color
+      ctx.fillRect(x0, 0, bw, H)
 
-    if (startPx >= 0 && startPx <= W) {
-      ctx.globalAlpha = alpha * 1.5
-      ctx.strokeStyle = p.color
-      ctx.lineWidth = 0.5
-      ctx.beginPath()
-      ctx.moveTo(startPx, 0)
-      ctx.lineTo(startPx, H)
-      ctx.stroke()
+      if (startPx >= 0 && startPx <= W) {
+        ctx.globalAlpha = style.alpha * 1.5
+        ctx.strokeStyle = band.color
+        ctx.lineWidth = 0.5
+        ctx.beginPath()
+        ctx.moveTo(startPx, 0)
+        ctx.lineTo(startPx, H)
+        ctx.stroke()
+      }
+
+      if (bw > 40) {
+        ctx.beginPath()
+        ctx.rect(x0 + 2, 0, bw - 4, H)
+        ctx.clip()
+
+        const lx = (x0 + x1) / 2
+        ctx.globalAlpha = style.labelAlpha
+        ctx.fillStyle = '#c8d8e8'
+        ctx.font = `${style.fontSize}px ui-monospace, monospace`
+        ctx.textAlign = 'center'
+        ctx.fillText(band.label.toUpperCase(), lx, style.labelY)
+      }
+
+      ctx.restore()
     }
-
-    if (bw > 40) {
-      ctx.beginPath()
-      ctx.rect(x0 + 2, 0, bw - 4, H)
-      ctx.clip()
-
-      const lx = (x0 + x1) / 2
-      const ly = p.level === 1 ? 12 : p.level === 2 ? 22 : 32
-      const fs = p.level === 1 ? 10 : p.level === 2 ? 9 : 8
-      ctx.globalAlpha = p.level === 1 ? 0.25 : p.level === 2 ? 0.30 : 0.35
-      ctx.fillStyle = '#c8d8e8'
-      ctx.font = `${fs}px ui-monospace, monospace`
-      ctx.textAlign = 'center'
-      ctx.fillText(p.label.toUpperCase(), lx, ly)
-    }
-
-    ctx.restore()
   }
 }
 
