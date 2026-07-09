@@ -22,6 +22,7 @@ export type TimelineEvent = {
 export class TimelineStore {
   viewCenterYear: number = BIG_BANG_YEAR + TOTAL_SPAN * 0.5
   yearPerPx: number = TOTAL_SPAN / 1000
+  canvasWidth: number = 1000
   events: TimelineEvent[] = []
 
   constructor(_root: RootStore) {
@@ -64,9 +65,26 @@ export class TimelineStore {
     this.viewCenterYear = anchorYear - (anchorPx - canvasWidth / 2) * this.yearPerPx
   });
 
+  readonly setCanvasWidth = action((width: number) => {
+    this.canvasWidth = width
+  });
+
+  // Zoom so that [startYear, endYear] exactly fills the current canvas width.
+  readonly zoomToRange = action((startYear: number, endYear: number) => {
+    const lo = Math.min(startYear, endYear)
+    const hi = Math.max(startYear, endYear)
+    const span = Math.max(hi - lo, 1e-6)
+    this.viewCenterYear = (lo + hi) / 2
+    this.yearPerPx = Math.max(0.0001, Math.min(TOTAL_SPAN / 4, span / this.canvasWidth))
+  });
+
   // GUI
   visibleCategories: Record<TimelineCategoryKey, boolean> = Object.fromEntries(
-    TIMELINE_CATEGORIES.map(c => [c.key, true]),
+    TIMELINE_CATEGORIES.map(c => {
+      if (c.key == 'yugaCustom')
+        return [c.key, true];
+      return [c.key, false];
+    }),
   ) as Record<TimelineCategoryKey, boolean>
 
   toggleCategory(key: TimelineCategoryKey) {
