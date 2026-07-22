@@ -1,9 +1,27 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { autorun } from 'mobx'
 import { useRootStore } from '../../stores/StoreContext'
-import { draw, type MarkerHit } from './drawTimeline'
+import { draw, type MarkerHit, type ChartFields } from './drawTimeline'
 import { decimalYearToDate } from './yearFormat'
 import type { HoverInfo } from './TimelineHoverCard'
+
+type ChartFieldSetters = {
+  setDay: (v: number) => void
+  setMonth: (v: number) => void
+  setYear: (v: number) => void
+  setTime: (v: number) => void
+  setLat: (v: number) => void
+  setLon: (v: number) => void
+}
+
+export function applyChartFields(chart: ChartFieldSetters, fields: ChartFields) {
+  if (fields.day   !== undefined) chart.setDay(fields.day)
+  if (fields.month !== undefined) chart.setMonth(fields.month)
+  if (fields.year  !== undefined) chart.setYear(fields.year)
+  if (fields.time  !== undefined) chart.setTime(fields.time)
+  if (fields.lat   !== undefined) chart.setLat(fields.lat)
+  if (fields.lon   !== undefined) chart.setLon(fields.lon)
+}
 
 function findHit(hits: MarkerHit[], x: number, y: number): MarkerHit | undefined {
   return hits.find(h => Math.hypot(h.x - x, h.y - y) <= h.radius)
