@@ -3,9 +3,25 @@ import { TIMELINE_CATEGORIES } from './categories'
 import { MARKER_ERAS } from './categories/markerEras'
 import { niceInterval, formatYear } from './yearFormat'
 
+// Date/location fields a marker is known to carry. Eras only ever carry
+// `year`; user timeline events carry all six.
+export type ChartFields = {
+  day?: number
+  month?: number
+  year?: number
+  time?: number
+  lat?: number
+  lon?: number
+}
+
 // A hoverable/clickable marker region, in canvas pixel space, for a
-// hard-coded era or a user timeline event that has a description.
-export type MarkerHit = { x: number; y: number; radius: number; label: string; description: string }
+// hard-coded era or a user timeline event.
+export type MarkerHit = {
+  x: number; y: number; radius: number
+  label: string
+  description: string
+  chartFields: ChartFields
+}
 
 function drawPeriods(
   ctx: CanvasRenderingContext2D,
@@ -165,9 +181,14 @@ export function draw(
     ctx.fillText(era.label, px, lineY - 52)
     ctx.restore()
 
-    if (era.description) {
-      hits.push({ x: px, y: lineY - 2, radius: 10, label: era.label, description: era.description })
-    }
+    hits.push({
+      x: px,
+      y: lineY - 2,
+      radius: 10,
+      label: era.label,
+      description: era.description ?? '',
+      chartFields: { year: era.year },
+    })
   }
 
   // ── BIG BANG radial glow ──
@@ -227,9 +248,14 @@ export function draw(
     ctx.fillText(ev.name, px, lineY + 46)
     ctx.restore()
 
-    if (ev.description) {
-      hits.push({ x: px, y: lineY + 7.5, radius: 9, label: ev.name, description: ev.description })
-    }
+    hits.push({
+      x: px,
+      y: lineY + 7.5,
+      radius: 9,
+      label: ev.name,
+      description: ev.description,
+      chartFields: { day: ev.day, month: ev.month, year: ev.year, time: ev.time, lat: ev.lat, lon: ev.lon },
+    })
   }
 
   // ── Selected date marker ──

@@ -68,7 +68,7 @@ export function useTimelineCanvas() {
     const mx = e.clientX - rect.left
     const my = e.clientY - rect.top
     const hit = findHit(hitsRef.current, mx, my)
-    setHover(hit ? { x: mx, y: my, label: hit.label, description: hit.description } : null)
+    setHover(hit && hit.description ? { x: mx, y: my, label: hit.label, description: hit.description } : null)
   }, [store])
 
   const onMouseUp = useCallback((e: React.MouseEvent) => {
