@@ -20,7 +20,7 @@ export function buildPeriodTreeData(): PeriodTreeNode[] {
 
 const CATEGORY_KEYS = new Set<string>(TIMELINE_CATEGORIES.map(category => category.key))
 
-export function toCategoryKeys(checkedKeys: (string | number)[]): TimelineCategoryKey[] {
+export function toCategoryKeys(checkedKeys: (string | number | bigint)[]): TimelineCategoryKey[] {
   return checkedKeys.filter(
     (key): key is TimelineCategoryKey => CATEGORY_KEYS.has(String(key)),
   )

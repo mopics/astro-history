@@ -11,7 +11,7 @@ const AGE_LENGTH = CYCLE_YEARS / 12
 
 // Tweak this to shift every age: the year the Age of Pisces is conventionally
 // 1 said to have begun under equal-division dating (e.g. Neil Mann's table).
-const ANCHOR_YEAR = 501 // ASC/DESC switch of short kali-yuga
+const ANCHOR_YEAR = 1 // ASC/DESC switch of short kali-yuga
 const ANCHOR_SIGN_INDEX = 1 // Pisces' index in ZODIAC_RETROGRADE below
 
 // How many full 25,772-year cycles to draw on either side of the anchor.
