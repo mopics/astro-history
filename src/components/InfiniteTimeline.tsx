@@ -6,6 +6,7 @@ import { ViewSelection } from './timeline/ViewSelection'
 import { ZoomRangeControl } from './timeline/ZoomRangeControl'
 import { draw, type MarkerHit } from './timeline/drawTimeline'
 import { decimalYearToDate } from './timeline/yearFormat'
+import { TimelineHoverCard, type HoverInfo } from './timeline/TimelineHoverCard'
 
 // ── Component ────────────────────────────────────────────────────────────────
 
@@ -18,7 +19,7 @@ export const InfiniteTimeline = observer(() => {
   const drag = useRef<{ x: number; center: number; moved: boolean } | null>(null)
   // Hoverable/clickable marker regions from the most recent draw
   const hitsRef = useRef<MarkerHit[]>([])
-  const [hover, setHover] = useState<{ x: number; y: number; label: string; description: string } | null>(null)
+  const [hover, setHover] = useState<HoverInfo | null>(null)
 
   const redraw = useCallback(() => {
     const canvas = canvasRef.current
@@ -115,19 +116,7 @@ export const InfiniteTimeline = observer(() => {
       <canvas ref={canvasRef} className="block" />
       <ViewSelection />
       <ZoomRangeControl />
-      {hover && (
-        <div
-          className="absolute z-20 max-w-xs pointer-events-none rounded-md border border-slate-700/60 bg-slate-900/95 px-3 py-2 text-xs text-slate-200 shadow-lg backdrop-blur-sm"
-          style={{
-            left: Math.max(8, Math.min(hover.x + 14, (canvasRef.current?.width ?? 9999) - 288)),
-            top: hover.y < 100 ? hover.y + 14 : hover.y - 14,
-            transform: hover.y < 100 ? undefined : 'translateY(-100%)',
-          }}
-        >
-          <div className="mb-1 font-semibold text-slate-100">{hover.label}</div>
-          <div className="leading-snug text-slate-300">{hover.description}</div>
-        </div>
-      )}
+      <TimelineHoverCard hover={hover} canvasWidth={canvasRef.current?.width ?? 9999} />
       <span className="absolute bottom-2 right-3 text-[10px] text-slate-700 pointer-events-none">
         click to set date · drag to pan · scroll to zoom
       </span>
