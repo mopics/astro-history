@@ -26,6 +26,18 @@ describe('applyChartFields', () => {
     expect(chart.setLon).not.toHaveBeenCalled()
   })
 
+  it('calls setYear with 0 for the Common Era marker', () => {
+    const chart = createChartSpy()
+    applyChartFields(chart, { year: 0 })
+
+    expect(chart.setYear).toHaveBeenCalledWith(0)
+    expect(chart.setDay).not.toHaveBeenCalled()
+    expect(chart.setMonth).not.toHaveBeenCalled()
+    expect(chart.setTime).not.toHaveBeenCalled()
+    expect(chart.setLat).not.toHaveBeenCalled()
+    expect(chart.setLon).not.toHaveBeenCalled()
+  })
+
   it('calls every setter when all fields are present', () => {
     const chart = createChartSpy()
     applyChartFields(chart, { day: 5, month: 3, year: 1974, time: 12, lat: 5, lon: 4 })
