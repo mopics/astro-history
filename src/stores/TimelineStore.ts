@@ -87,7 +87,10 @@ export class TimelineStore {
     }),
   ) as Record<TimelineCategoryKey, boolean>
 
-  toggleCategory(key: TimelineCategoryKey) {
-    this.visibleCategories[key] = !this.visibleCategories[key]
-  }
+  readonly setVisibleCategories = action((keys: TimelineCategoryKey[]) => {
+    const visible = new Set(keys)
+    for (const category of TIMELINE_CATEGORIES) {
+      this.visibleCategories[category.key] = visible.has(category.key)
+    }
+  });
 }
