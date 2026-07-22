@@ -96,7 +96,8 @@ export function useTimelineCanvas() {
       const my = e.clientY - rect.top
       const hit = findHit(hitsRef.current, px, my)
       if (hit) {
-        setHover({ x: px, y: my, label: hit.label, description: hit.description })
+        if (hit.description) setHover({ x: px, y: my, label: hit.label, description: hit.description })
+        applyChartFields(root.astroChart, hit.chartFields)
       } else {
         const decYear = store.pixelToYear(px, canvasRef.current.width)
         const { year, month, day } = decimalYearToDate(decYear)

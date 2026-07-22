@@ -25,7 +25,7 @@ export const InfiniteTimeline = observer(() => {
       <ZoomRangeControl />
       <TimelineHoverCard hover={hover} canvasWidth={canvasRef.current?.width ?? 9999} />
       <span className="absolute bottom-2 right-3 text-[10px] text-slate-700 pointer-events-none">
-        click to set date · drag to pan · scroll to zoom
+        click marker to load info · click empty space to set date · drag to pan · scroll to zoom
       </span>
     </div>
   )
